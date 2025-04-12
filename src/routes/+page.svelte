@@ -174,9 +174,15 @@
 	const animateScreenThree = () => {
 		const tl = gsap.timeline();
 
-		tl.to('#img', {
-			opacity: 1
-		});
+		tl.fromTo(
+			'#img',
+			{
+				opacity: 0
+			},
+			{
+				opacity: 1
+			}
+		);
 
 		tl.to('#text-eight', {
 			text: 'Happy Birthday!',
@@ -189,6 +195,18 @@
 			ease: 'none',
 			duration: 5
 		});
+
+		tl.fromTo(
+			'#continue-btn',
+			{
+				opacity: 0,
+				rotateY: -360
+			},
+			{
+				opacity: 1,
+				rotateY: 0
+			}
+		);
 
 		document.querySelectorAll('.baloons img').forEach((baloon, i) => {
 			tl.fromTo(
@@ -251,6 +269,13 @@
 		}, 7000);
 	});
 </script>
+
+<svelte:head>
+	<link
+		rel="stylesheet"
+		href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+	/>
+</svelte:head>
 
 {#if showQuestion}
 	<div class="pt-60 text-slate-200" out:fade>
@@ -330,12 +355,16 @@
 		class="fixed top-0 left-0 flex min-h-screen w-full flex-col items-center justify-center text-slate-200"
 	>
 		<div class="flex flex-col items-center gap-4">
-			<img src="/img/person.jpg" class="size-64 opacity-0" alt="" id="img" />
+			<img src="/img/person.png" class="size-64 rounded-full opacity-0" alt="" id="img" />
 
 			<div class="wish flex flex-col gap-3 text-center">
 				<h3 class="wish-hbd text-6xl" id="text-eight"></h3>
 				<h5 id="text-nine" class="text-3xl"></h5>
 			</div>
+
+			<button class="rounded-full px-12 py-4 text-2xl opacity-0" id="continue-btn">
+				<i class="bi bi-chevron-double-right"></i> Lanjut <i class="bi bi-chevron-double-left"></i>
+			</button>
 		</div>
 
 		<div class="seven" id="baloons">
