@@ -4,9 +4,12 @@
 	import { TextPlugin } from 'gsap/TextPlugin';
 	import { timestamp, Birthday } from '$lib/birthday';
 	import { twMerge } from 'tailwind-merge';
+	import Swal from 'sweetalert2';
 
 	let audio: HTMLAudioElement;
 	let question: HTMLHeadingElement;
+
+	let stopFireworks = $state(false);
 
 	let showQuestion = $state(true);
 
@@ -18,6 +21,11 @@
 	let showScreenOne = $state(false);
 	let showScreenTwo = $state(false);
 	let showScreenThree = $state(false);
+
+	const blowerAudio = new Audio();
+	blowerAudio.loop = true;
+	blowerAudio.volume = 0.2;
+	blowerAudio.src = '/music/party-blower.mp3';
 
 	const animateScreenOne = () => {
 		const tl = gsap.timeline();
@@ -181,11 +189,6 @@
 		// audio.src = '/music/fireworks.mp3';
 		// audio.play();
 
-		const blowerAudio = new Audio();
-
-		blowerAudio.loop = true;
-		blowerAudio.volume = 0.2;
-		blowerAudio.src = '/music/party-blower.mp3';
 		blowerAudio.play();
 
 		// for (let i = 0; i <= 100; i++) {
@@ -258,6 +261,7 @@
 		document.onclick = (evt) => birthday.onClick(evt);
 		document.ontouchstart = (evt) => birthday.onClick(evt);
 		(function loop() {
+			if (stopFireworks) return;
 			requestAnimationFrame(loop);
 
 			let now = timestamp();
@@ -283,6 +287,11 @@
 	};
 
 	$effect(() => {
+		Swal.fire({
+			title: 'Izinkan autoplay',
+			text: 'untuk mengaktifkannya, silahkan cek di setting anda atau di '
+		});
+
 		audio.loop = true;
 		audio.src = '/music/lobby.mp3';
 		audio.volume = 0.2;
@@ -303,6 +312,12 @@
 		setTimeout(() => {
 			showButtons = true;
 		}, 7000);
+
+		return () => {
+			audio.pause();
+			blowerAudio.pause();
+			stopFireworks = true;
+		};
 	});
 </script>
 
@@ -402,7 +417,12 @@
 		class="fixed top-0 left-0 flex min-h-screen w-full flex-col items-center justify-center text-slate-200"
 	>
 		<div class="flex flex-col items-center gap-4">
-			<img src="/img/person.png" class="size-64 rounded-full opacity-0" alt="" id="img" />
+			<img
+				src="/img/person.jpg"
+				class="size-64 rounded-full object-cover object-center opacity-0"
+				alt=""
+				id="img"
+			/>
 
 			<div class="wish flex flex-col gap-3 text-center">
 				<h3 class="wish-hbd text-6xl opacity-0" id="text-eight">Happy Birthday</h3>
