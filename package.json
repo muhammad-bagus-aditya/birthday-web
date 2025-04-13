@@ -29,6 +29,7 @@
 		"vite": "^6.2.5"
 	},
 	"dependencies": {
-		"gsap": "^3.12.7"
+		"gsap": "^3.12.7",
+		"tailwind-merge": "^3.2.0"
 	}
 }

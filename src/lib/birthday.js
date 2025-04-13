@@ -95,6 +95,9 @@ export class Firework {
 
 		this.shade = shade;
 		this.history = [];
+
+		this.audio = new Audio();
+		this.audio.src = '/music/firework.mp3';
 	}
 	update(delta) {
 		if (this.dead) return;
@@ -123,6 +126,8 @@ export class Firework {
 						new Firework(this.birthday, this.ctx, this.x, this.y, targetX, targetY, this.shade, 0)
 					);
 				}
+
+				this.audio.play();
 			}
 			this.madeChilds = true;
 			this.history.shift();

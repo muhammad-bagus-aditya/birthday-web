@@ -3,11 +3,15 @@
 	import { gsap } from 'gsap';
 	import { TextPlugin } from 'gsap/TextPlugin';
 	import { timestamp, Birthday } from '$lib/birthday';
+	import { twMerge } from 'tailwind-merge';
+
+	let audio: HTMLAudioElement;
+	let question: HTMLHeadingElement;
 
 	let showQuestion = $state(true);
 
-	let question: HTMLHeadingElement;
-	const text = 'Apakah kamu yang bernama lorem ipsum';
+	let text = $state('Apakah kamu yang bernama Aida Aprila');
+	let failed = $state(false);
 
 	let showButtons = $state(false);
 
@@ -172,6 +176,22 @@
 	};
 
 	const animateScreenThree = () => {
+		audio.pause();
+
+		// audio.src = '/music/fireworks.mp3';
+		// audio.play();
+
+		const blowerAudio = new Audio();
+
+		blowerAudio.loop = true;
+		blowerAudio.volume = 0.2;
+		blowerAudio.src = '/music/party-blower.mp3';
+		blowerAudio.play();
+
+		// for (let i = 0; i <= 100; i++) {
+		// 	audio.volume = i / 100;
+		// }
+
 		const tl = gsap.timeline();
 
 		tl.fromTo(
@@ -185,15 +205,17 @@
 		);
 
 		tl.to('#text-eight', {
-			text: 'Happy Birthday!',
-			duration: 3,
-			ease: 'none'
+			opacity: 1
 		});
 
 		tl.to('#text-nine', {
-			text: 'Semoga panjang umur dan sehat selalu ;)',
+			opacity: 1
+		});
+
+		tl.to('#text-ten', {
+			text: 'Semoga panjang umur, sehat selalu, diberikan jalan yang terbaik, dimudahkan urusannya, dikabulkan keinginannya, dan sukses dunia akhirat.',
 			ease: 'none',
-			duration: 5
+			duration: 8
 		});
 
 		tl.fromTo(
@@ -255,13 +277,27 @@
 		}, 1000);
 	};
 
+	const clickNoButton = () => {
+		text = 'Maaf ini special buat Aida';
+		failed = true;
+	};
+
 	$effect(() => {
+		audio.loop = true;
+		audio.src = '/music/lobby.mp3';
+		audio.volume = 0.2;
+		audio?.play();
+
 		gsap.registerPlugin(TextPlugin);
 
-		gsap.to(question, {
-			duration: 6,
-			text,
-			ease: 'none'
+		const tl = gsap.timeline();
+
+		tl.from(question, {
+			translateY: '20px'
+		});
+
+		tl.from('#buttons', {
+			opacity: 0
 		});
 
 		setTimeout(() => {
@@ -271,32 +307,43 @@
 </script>
 
 <svelte:head>
+	<title>HBD FOR AIDA</title>
+
 	<link
 		rel="stylesheet"
 		href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
 	/>
 </svelte:head>
 
+<audio bind:this={audio}></audio>
+
 {#if showQuestion}
 	<div class="pt-60 text-slate-200" out:fade>
-		<h1 class="mx-auto w-[50%] text-center text-5xl leading-16" bind:this={question}></h1>
+		<h1
+			class={twMerge(
+				'mx-auto w-[50%] text-center text-5xl leading-16',
+				failed ? 'text-red-600' : ''
+			)}
+			bind:this={question}
+		>
+			{text}
+		</h1>
 
-		{#if showButtons}
-			<div class="mt-12 flex justify-center gap-8" in:fade>
-				<button
-					class="w-48 rounded-full border-2 border-emerald-600 px-8 py-4 text-3xl text-emerald-600 transition-all duration-500 hover:bg-emerald-600 hover:text-slate-200"
-					onclick={clickYesButton}
-				>
-					Iya
-				</button>
+		<div class="mt-12 flex justify-center gap-8" id="buttons">
+			<button
+				class="w-48 rounded-full border-2 border-emerald-600 px-8 py-4 text-3xl text-emerald-600 transition-all duration-500 hover:bg-emerald-600 hover:text-slate-200"
+				onclick={clickYesButton}
+			>
+				Iya
+			</button>
 
-				<button
-					class="w-48 rounded-full border-2 border-red-600 px-8 py-4 text-3xl text-red-600 transition-all duration-500 hover:bg-red-600 hover:text-slate-200"
-				>
-					Tidak
-				</button>
-			</div>
-		{/if}
+			<button
+				class="w-48 rounded-full border-2 border-red-600 px-8 py-4 text-3xl text-red-600 transition-all duration-500 hover:bg-red-600 hover:text-slate-200"
+				onclick={clickNoButton}
+			>
+				Tidak
+			</button>
+		</div>
 	</div>
 {/if}
 
@@ -308,7 +355,7 @@
 		<div class="flex flex-col gap-6 opacity-0" id="text-one">
 			<h1 class="text-center text-6xl">
 				Halo
-				<span id="name">Lorem ipsum</span>
+				<span id="name">Aida Aprila</span>
 			</h1>
 		</div>
 
@@ -329,13 +376,13 @@
 		</div>
 
 		<div class="fixed top-0 left-0 flex h-full w-full items-center justify-center">
-			<p class="text-6xl opacity-0" id="text-four">Karena,</p>
+			<p class="text-6xl opacity-0" id="text-four">Tapi,</p>
 		</div>
 
 		<div class="fixed top-0 left-0 flex h-full w-full items-center justify-center">
 			<p class="text-6xl opacity-0" id="text-five">
-				Kamu sangat spesial
-				<span>:)</span>
+				Tunggu nanti sore yah
+				<span>:D</span>
 			</p>
 		</div>
 
@@ -358,12 +405,16 @@
 			<img src="/img/person.png" class="size-64 rounded-full opacity-0" alt="" id="img" />
 
 			<div class="wish flex flex-col gap-3 text-center">
-				<h3 class="wish-hbd text-6xl" id="text-eight"></h3>
-				<h5 id="text-nine" class="text-3xl"></h5>
+				<h3 class="wish-hbd text-6xl opacity-0" id="text-eight">Happy Birthday</h3>
+				<h5 id="text-nine" class="text-3xl opacity-0">Aida Aprila Salsabila</h5>
+				<p id="text-ten" class="mx-auto w-[60%] text-xl"></p>
 			</div>
 
 			<button class="rounded-full px-12 py-4 text-2xl opacity-0" id="continue-btn">
-				<i class="bi bi-chevron-double-right"></i> Lanjut <i class="bi bi-chevron-double-left"></i>
+				<a href="/video">
+					<i class="bi bi-chevron-double-right"></i> Aamiin!
+					<i class="bi bi-chevron-double-left"></i>
+				</a>
 			</button>
 		</div>
 
