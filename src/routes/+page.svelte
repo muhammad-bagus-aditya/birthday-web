@@ -23,8 +23,12 @@
 	let showScreenThree = $state(false);
 
 	const blowerAudio = new Audio();
+	const music = new Audio();
+
+	music.src = '/music/last-day-on-earth.mp3';
+
 	blowerAudio.loop = true;
-	blowerAudio.volume = 0.2;
+	blowerAudio.volume = 0.5;
 	blowerAudio.src = '/music/party-blower.mp3';
 
 	const animateScreenOne = () => {
@@ -42,26 +46,8 @@
 			}
 		);
 
-		tl.fromTo(
-			'#text-two',
-			{
-				translateY: '-20px',
-				opacity: 0
-			},
-			{
-				delay: 1,
-				translateY: 0,
-				opacity: 1
-			}
-		);
-
 		tl.to('#text-one', {
 			delay: 2,
-			translateY: '20px',
-			opacity: 0
-		});
-
-		tl.to('#text-two', {
 			translateY: '20px',
 			opacity: 0
 		});
@@ -190,6 +176,24 @@
 		// audio.play();
 
 		blowerAudio.play();
+		music.play();
+
+		setTimeout(() => {
+			blowerAudio.pause();
+		}, 10000);
+
+		const pauseMusic = () => {
+			setTimeout(() => {
+				music.volume -= 0.05;
+
+				if (music.volume === 0) music.pause();
+				else pauseMusic();
+			}, 500);
+		};
+
+		setTimeout(() => {
+			pauseMusic();
+		}, 80000);
 
 		// for (let i = 0; i <= 100; i++) {
 		// 	audio.volume = i / 100;
@@ -287,14 +291,17 @@
 	};
 
 	$effect(() => {
+		music.load();
+		music.volume = 0.5;
+
 		Swal.fire({
 			title: 'Izinkan autoplay',
-			text: 'untuk mengaktifkannya, silahkan cek di setting anda atau di '
+			text: 'untuk mengaktifkannya, silahkan cek di setting anda untuk permision autoplay'
 		});
 
 		audio.loop = true;
 		audio.src = '/music/lobby.mp3';
-		audio.volume = 0.2;
+		audio.volume = 0.5;
 		audio?.play();
 
 		gsap.registerPlugin(TextPlugin);
@@ -316,6 +323,7 @@
 		return () => {
 			audio.pause();
 			blowerAudio.pause();
+			music.pause();
 			stopFireworks = true;
 		};
 	});
@@ -372,10 +380,6 @@
 				Halo
 				<span id="name">Aida Aprila</span>
 			</h1>
-		</div>
-
-		<div id="text-two" class="opacity-0">
-			<p class="text-6xl">Hari ini ulang tahunmu!! :D</p>
 		</div>
 	</div>
 {/if}
